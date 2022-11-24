@@ -20,7 +20,14 @@ filename = np.zeros(len(cl_json), dtype=object)
 for i in range(0,len(cl_json)):
     filename[i] = cl_json[i]["filename"]
 
+#%%
 for i in filename:
-    source = Path(__file__).parents[2] / 'dataset' /'dataset1'/'CL' / i
-    destination = Path(__file__).parents[1] / 'images' / 'cl200'
-    shutil.copy2(source, destination)
+    # find CL 200 images
+    source1 = Path(__file__).parents[2] / 'dataset' /'dataset1'/'CL' / i
+    destination1 = Path(__file__).parents[1] / 'images' / 'cl200'
+    shutil.copy2(source1, destination1)
+    
+    # find BSE 200 images
+    source2 = Path(__file__).parents[2] / 'dataset' /'dataset1'/'BSE' / i
+    destination2 = Path(__file__).parents[1] / 'images' / 'bse200'
+    shutil.copy2(source2, destination2)
