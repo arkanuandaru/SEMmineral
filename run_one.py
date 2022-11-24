@@ -18,12 +18,12 @@ from bse_seg import *
 # run one start
 if __name__ == '__main__':
     
-    # grab image
-    img_path = "images/image5_60_3"
+    
+    #%% bse segmentation
+    img_path = "images/bse/image7_20_1"
     img = cv2.imread(img_path + ".tif")
     
-    
-    # run bse segmentation and save segmented image
+    # run  and save segmented image
     img_segmented, _ = segment(img)
     cv2.imwrite(img_path + "seg.tif", img_segmented)
 
@@ -37,3 +37,5 @@ if __name__ == '__main__':
     ax[1].imshow(img_segmented, cmap='gray', interpolation='nearest')
     ax[1].set_title('Segmented')
     ax[1].axis('off')
+    
+ 

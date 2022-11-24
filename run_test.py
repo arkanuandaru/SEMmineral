@@ -33,23 +33,49 @@ plt.legend()
 
 cv2.imwrite(img_path + "th.tif", th)
 
-#%% test multi-otsu
+#%% test denoise
+
+img_path = "images/cl/image31_44_2"
+image = cv2.imread(img_path + ".tif")
+float_img = img_as_float(image)
+
+# # #%%add blur
+# float_blur_img = cv2.GaussianBlur(float_img, (15, 15), 2)
+# sigma_est = np.mean(estimate_sigma(float_blur_img, multichannel=True))
+# denoise_img = denoise_nl_means(float_blur_img, h=1.3 * sigma_est, fast_mode=False, 
+#                                 patch_size=10, patch_distance=6, multichannel=True)                               
+
+# denoise_img_as_8byte = img_as_ubyte(denoise_img)
+# denoise_img_as_8byte_gray = cv2.cvtColor(denoise_img_as_8byte, cv2.COLOR_BGR2GRAY)
+
+# denoise                                    
+sigma_est = np.mean(estimate_sigma(float_img, multichannel=True))
+denoise_img = denoise_nl_means(float_img, h=1.15 * sigma_est, fast_mode=False, 
+                                    patch_size=5, patch_distance=3, multichannel=True)
+
+
+
+denoise_img_as_8byte = img_as_ubyte(denoise_img)
+denoise_img_as_8byte_gray = cv2.cvtColor(denoise_img_as_8byte, cv2.COLOR_BGR2GRAY)
+
+
+# plot before after
+# fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 3.5))
+ 
+# ax[0].imshow(image)
+# ax[0].set_title('Original')
+# ax[0].axis('off')
+
+# ax[1].imshow(denoise_img_as_8byte_gray, cmap='gray')
+# ax[1].set_title('Denoise')
+# ax[1].axis('off')
+
+
+# test multi-otsu
 
 from skimage import data, io, img_as_ubyte
 from skimage.filters import threshold_multiotsu
 import numpy as np
-
-image = cv2.imread("images/image31_44_2.tif")
-float_img = img_as_float(image)
-sigma_est = np.mean(estimate_sigma(float_img, channel_axis=1))
-
-denoise_img = denoise_nl_means(float_img, h=1.15 * sigma_est, fast_mode=False, 
-                               patch_size=5, patch_distance=3, channel_axis=1)
-
-denoise_img_as_8byte = img_as_ubyte(denoise_img)
-denoise_img_as_8byte_gray = cv2.cvtColor(denoise_img_as_8byte, cv2.COLOR_BGR2GRAY)
- 
-plt.imshow(denoise_img_as_8byte_gray, cmap=plt.cm.gray, interpolation='nearest') 
 
 thresholds = threshold_multiotsu(denoise_img_as_8byte_gray, classes = 4)
 regions = np.digitize(denoise_img_as_8byte_gray, bins=thresholds)
@@ -105,6 +131,8 @@ all_segments_cleaned[segm3_closed] = (0,255,0)
 img_segmented = np.uint8(all_segments_cleaned)
 
 
+cv2.imwrite(img_path + "seg.tif", img_segmented)
+
 #Let us look at the input image, thresholds on thehistogram and final segmented image
 fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 3.5))
 
@@ -121,10 +149,26 @@ for thresh in thresholds:
     ax[1].axvline(thresh, color='r')
 
 # Plotting the Multi Otsu result.
-ax[2].imshow(img_segmented, cmap='gray')
+ax[2].imshow(img_segmented)
 ax[2].set_title('Multi-Otsu result')
 ax[2].axis('off')
 
 plt.subplots_adjust()
 
 plt.show()
+
+#%% test cl segmentation
+
+# bse
+img_path1 = "images/bse/image7_20_1seg"
+image1 = cv2.imread(img_path1 + ".tif")
+
+# cl
+img_path2 = "images/cl/image7_20_1"
+image2 = cv2.imread(img_path2 + ".tif")
+
+added_image = cv2.addWeighted(image2,0.4,image1,0.1, 0)
+
+plt.imshow(added_image, interpolation='nearest')
+
+# cv2.imwrite('combined.png', added_image)
