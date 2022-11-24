@@ -20,7 +20,7 @@ from matplotlib import pyplot as plt
 from scipy import ndimage as nd
 
 
-def segment(bse):
+def bse_segment(img):
     """
     
     Parameters
@@ -38,7 +38,7 @@ def segment(bse):
     # IMAGE LOADING AND DENOISING
     # Clean the noise using edge preserving filter
     
-    float_img = img_as_float(bse)
+    float_img = img_as_float(img)
     sigma_est = np.mean(estimate_sigma(float_img, multichannel=True))
     
     denoise_img = denoise_nl_means(float_img, h=1.15 * sigma_est, fast_mode=False, 
