@@ -39,8 +39,8 @@ if __name__ == '__main__':
     # show before and after
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 3.5))
 
-    ax[0].imshow(img, cmap='gray', interpolation='nearest')
-    ax[0].set_title(img_path + '   Original')
+    ax[0].imshow(img_overlay, cmap='gray', interpolation='nearest')
+    ax[0].set_title(img_name + '   Original')
     ax[0].axis('off')
     
     ax[1].imshow(img_cl_seg, interpolation='nearest')
