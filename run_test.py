@@ -16,11 +16,11 @@ from bse_seg import *
 
 #%% test threshold - setup
 
-img_path = "images/image5_60_3"
+img_path = "dataset1/bse/image5_60_3"
 img = cv2.imread(img_path + ".tif")
 plt.imshow(img, cmap=plt.cm.gray, interpolation='nearest') 
 
-#%test image manipulation
+#%%test image manipulation
 ret, th = cv2.threshold(img, 150, 200, cv2.THRESH_TRUNC)
 # plt.imshow(th, cmap=plt.cm.gray, interpolation='nearest')
 
@@ -157,17 +157,24 @@ plt.subplots_adjust()
 
 plt.show()
 
-#%% test cl segmentation
+#%% test cl segmentation and translate dataset 1 run 1
 
 # bse
-img_path1 = "images/bse/image7_20_1seg"
+img_path1 = "dataset1/trainingset/BSE_segmented/image6_18_1_seg"
 image1 = cv2.imread(img_path1 + ".tif")
 
 # cl
-img_path2 = "images/cl/image7_20_1"
+img_path2 = "dataset1/trainingset/CL/image6_18_1"
 image2 = cv2.imread(img_path2 + ".tif")
 
-added_image = cv2.addWeighted(image2,0.4,image1,0.1, 0)
+#translate bse
+x = 28
+y = 20
+M_dataset1_1 = np.float32([[1, 0, x],[0, 1, y]])
+image1_trans = cv2.warpAffine(image1, M_dataset1_1, (image1.shape[1], image1.shape[0]))
+
+# overlay images
+added_image = cv2.addWeighted(image2,0.4,image1_trans,0.1, 0)
 
 plt.imshow(added_image, interpolation='nearest')
 
