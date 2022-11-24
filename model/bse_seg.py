@@ -14,10 +14,11 @@ import shutil
 from skimage import io
 from skimage.color import rgb2gray
 from skimage.restoration import denoise_nl_means, estimate_sigma
-from skimage import img_as_ubyte, img_as_float
+from skimage import img_as_ubyte, img_as_float, data, io
+from skimage.filters import threshold_multiotsu
+import numpy as np
 from matplotlib import pyplot as plt
 from scipy import ndimage as nd
-import numpy as np
 
 
 def segment(bse):
@@ -52,17 +53,54 @@ def segment(bse):
     # Convert the BSE into grayscale
     denoise_img_as_8byte_gray = cv2.cvtColor(denoise_img_as_8byte, cv2.COLOR_BGR2GRAY)
     
-
-    # SEGMENTATION THRESHOLD
-
-    segm1 = (denoise_img_as_8byte_gray <= 125) # Porosity
-    segm2 = (denoise_img_as_8byte_gray > 125) & (denoise_img_as_8byte_gray <= 175) # Quartz
-    segm3 = (denoise_img_as_8byte_gray > 175) # Other mineral
-    # segm4 = (denoise_img_as_8byte_gray > 210)
+    #%% multi-otsu threshold
+    thresholds = threshold_multiotsu(denoise_img_as_8byte_gray, classes = 4)
+    regions = np.digitize(denoise_img_as_8byte_gray, bins=thresholds)
     
-    # Constructing new image shape
-    all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) #nothing but denoise img size but blank
+    # assign segments
+    segm1 = (regions == 0) 
+    reg1 = (regions == 1) 
+    reg2 = (regions == 2) 
+    reg3 = (regions == 3) 
+    
+    # non_porosity count
+    reg_count = [np.count_nonzero(reg1), np.count_nonzero(reg2), np.count_nonzero(reg3)]
+    
+    # Qtz is the region with most data
+    if reg_count[0] > reg_count[1]:
+        segm2 = reg1 
+        segm3 = reg2 + reg3
+    else:
+        segm2 = reg2
+        segm3 = reg1 + reg3
+    
+    # assign segments
+    all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
+    
+    all_segments[segm1] = (0,0,0) # the pore 
+    all_segments[segm2] = (255,255,0) 
+    all_segments[segm3] = (0,255,0) 
 
+    
+    
+    #%%    
+    # normalize brightness
+    # denoise_img_as_8byte_gray_ori = cv2.cvtColor(denoise_img_as_8byte, cv2.COLOR_BGR2GRAY)
+    # _, denoise_img_as_8byte_gray = cv2.threshold(denoise_img_as_8byte_gray_ori, 254, 255, cv2.THRESH_TRUNC)
+    
+    # SEGMENTATION THRESHOLD - hardcode
+    # segm1 = (denoise_img_as_8byte_gray <= 60) # Porosity
+    # segm2 = (denoise_img_as_8byte_gray > 100) & (denoise_img_as_8byte_gray <= 175) # Quartz
+    # segm3 = ((denoise_img_as_8byte_gray > 60) & (denoise_img_as_8byte_gray <= 100))\
+    #         + (denoise_img_as_8byte_gray > 175) # Other mineral
+    # # & (denoise_img_as_8byte_gray > 175)
+    # # segm4 = (denoise_img_as_8byte_gray > 210)
+    
+    #%% Constructing new image shape
+    
+    #nothing but denoise img size but blank
+
+    all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
     all_segments[segm1] = (0,0,0) # the pore 2
     all_segments[segm2] = (255,255,0) # quartz 0
     all_segments[segm3] = (0,255,0) # other mineral 3

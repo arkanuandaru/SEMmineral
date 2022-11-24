@@ -15,14 +15,25 @@ from matplotlib import pyplot as plt
 sys.path.append('/Users/sau/Documents/Stanford/adventure/semhackathon2022/semhackathon/model/')
 from bse_seg import *
 
+# run one start
 if __name__ == '__main__':
     
     # grab image
     img_path = "images/image5_60_3"
     img = cv2.imread(img_path + ".tif")
-    plt.imshow(img, cmap=plt.cm.gray, interpolation='nearest')  
+    
     
     # run bse segmentation and save segmented image
     img_segmented, _ = segment(img)
-    plt.imshow(img_segmented)
     cv2.imwrite(img_path + "seg.tif", img_segmented)
+
+    # show before and after
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 3.5))
+
+    ax[0].imshow(img, cmap='gray', interpolation='nearest')
+    ax[0].set_title(img_path + '   Original')
+    ax[0].axis('off')
+    
+    ax[1].imshow(img_segmented, cmap='gray', interpolation='nearest')
+    ax[1].set_title('Segmented')
+    ax[1].axis('off')
