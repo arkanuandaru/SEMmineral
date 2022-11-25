@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Nov 23 20:59:37 2022
-
-@author: sau
-"""
 
 import json
 import numpy as np
@@ -35,7 +30,6 @@ for i in filename:
     shutil.copy2(source2, destination2)
     
 #%% construct df for training
-
 df_json = pd.DataFrame()
 
 for i in range(0, len(cl_json)):
@@ -45,10 +39,9 @@ for i in range(0, len(cl_json)):
     for j in range(0,30):
         filename_30[j] = cl_json[i]["filename"]
         
-    label = pd.df([cl_json[i]["label_id"]])
+    label_id = pd.Series(cl_json[i]["label_id"])
     label_x = pd.Series(cl_json[i]["label_x"])
     label_y = pd.Series(cl_json[i]["label_y"])
     
     df_json_each = pd.concat([filename_30, label_id, label_x, label_y],axis=1,keys =["filename","label_id","label_x","label_y"],ignore_index=True)
-    
-    pd.concat([df_json, df_json_each],ignore_index=True)
+    df_json = pd.concat([df_json, df_json_each],ignore_index=True)
