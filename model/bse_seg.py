@@ -119,13 +119,13 @@ def bse_segment(img):
     # CALCULATING AREA
     # Getting image area
     
-    total_area  = all_segments_cleaned.shape[0] * all_segments_cleaned.shape[1]
-    pore_area   = len(all_segments_cleaned[segm1_closed]) / total_area
-    qz_area     = len(all_segments_cleaned[segm2_closed]) / total_area
-    other_area  = len(all_segments_cleaned[segm3_closed]) / total_area
+    # total_area  = all_segments_cleaned.shape[0] * all_segments_cleaned.shape[1]
+    # pore_area   = len(all_segments_cleaned[segm1_closed]) / total_area
+    # qz_area     = len(all_segments_cleaned[segm2_closed]) / total_area
+    # other_area  = len(all_segments_cleaned[segm3_closed]) / total_area
     
-    rel_areas = [qz_area, pore_area, other_area]
+    # rel_areas = [qz_area, pore_area, other_area]
     
     
-    return img_segmented, cl_segm4, rel_areas
+    return img_segmented, cl_segm4
     

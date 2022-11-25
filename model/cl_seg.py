@@ -88,8 +88,10 @@ def cl_segment(img, cl_segm4_trans):
     total_area  = all_segments_cleaned.shape[0] * all_segments_cleaned.shape[1]
     pore_area   = len(all_segments_cleaned[segm1_closed]) / total_area
     qzove_area  = len(all_segments_cleaned[segm2_closed]) / total_area
+    qz_area     = len(all_segments_cleaned[segm3_closed]) / total_area
+    other_area  = len(all_segments_cleaned[segm4_closed]) / total_area
     
-    rel_areas = [pore_area, qzove_area]
+    rel_areas = [qz_area, qzove_area, other_area, pore_area]
     
     
     return img_segmented, rel_areas
