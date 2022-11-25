@@ -183,11 +183,12 @@ from skimage import data, io, img_as_ubyte
 from skimage.filters import threshold_multiotsu
 import numpy as np
 
-img_path = "dataset1/trainingset/CL_segmented/image6_18_1_seg"
-img = cv2.imread(img_path + ".tif")
-float_img = img_as_float(img)
+img_name = "image6_22_1"
+img_path = "dataset1/trainingset"
+img = cv2.imread(img_path + "/CL_segmented/" + img_name + "_ovr.tif")
 
-# denoise                                    
+# denoise
+float_img = img_as_float(img)                                    
 sigma_est = np.mean(estimate_sigma(float_img, multichannel=True))
 denoise_img = denoise_nl_means(float_img, h=1.15 * sigma_est, fast_mode=False, 
                                     patch_size=5, patch_distance=3, multichannel=True)
@@ -204,6 +205,7 @@ regions = np.digitize(denoise_img_as_8byte_gray, bins=thresholds)
 segm1 = (regions == 0) 
 segm2 = (regions == 1) 
 segm3 = (regions == 2) + (regions == 3) 
+segm4 = cl_segm4
 
 # assign segments
 all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
@@ -211,7 +213,7 @@ all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.sha
 all_segments[segm1] = (0,0,0) # the pore 
 all_segments[segm2] = (255,0,0) # Qz overgrowth
 all_segments[segm3] = (255,255,0) # Qz 
-
+all_segments[segm4] = (0,255,0) # Other
 
 # CLEANING UP
 
@@ -224,11 +226,15 @@ segm2_closed = nd.binary_closing(segm2_opened, np.ones((3,3)))
 segm3_opened = nd.binary_opening(segm3, np.ones((3,3)))
 segm3_closed = nd.binary_closing(segm3_opened, np.ones((3,3)))
 
+segm4_opened = nd.binary_opening(segm4, np.ones((3,3)))
+segm4_closed = nd.binary_closing(segm4_opened, np.ones((3,3)))
+
 all_segments_cleaned = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) #nothing but 714, 901, 3
 
 all_segments_cleaned[segm1_closed] = (0,0,0)
 all_segments_cleaned[segm2_closed] = (255,0,0)
 all_segments_cleaned[segm3_closed] = (255,255,0)
+all_segments_cleaned[segm4_closed] = (0,255,0)
 
 img_segmented = np.uint8(all_segments_cleaned)
 
@@ -239,13 +245,13 @@ img_segmented = np.uint8(all_segments_cleaned)
 fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 3.5))
 
 # Plotting the original image.
-ax[0].imshow(denoise_img_as_8byte, cmap='gray')
+ax[0].imshow(img, cmap='gray')
 ax[0].set_title('Original')
 ax[0].axis('off')
 
 # Plotting the histogram and the two thresholds obtained from
 # multi-Otsu.
-ax[1].hist(denoise_img_as_8byte.ravel(), bins=255)
+ax[1].hist(img.ravel(), bins=255)
 ax[1].set_title('Histogram')
 for thresh in thresholds:
     ax[1].axvline(thresh, color='r')

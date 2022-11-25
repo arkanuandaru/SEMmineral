@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 from scipy import ndimage as nd
 
 
-def cl_segment(img):
+def cl_segment(img, cl_segm4):
     """
     
     Parameters
@@ -49,14 +49,17 @@ def cl_segment(img):
     segm1 = (regions == 0) 
     segm2 = (regions == 1) 
     segm3 = (regions == 2) + (regions == 3) 
+    segm4 = cl_segm4
     
     # assign segments
     all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
+    
     all_segments[segm1] = (0,0,0) # the pore 
     all_segments[segm2] = (255,0,0) # Qz overgrowth
     all_segments[segm3] = (255,255,0) # Qz 
+    all_segments[segm4] = (0,255,0) # Other
     
-        # CLEANING UP
+    # CLEANING UP
     
     segm1_opened = nd.binary_opening(segm1, np.ones((3,3)))
     segm1_closed = nd.binary_closing(segm1_opened, np.ones((3,3)))
@@ -67,14 +70,18 @@ def cl_segment(img):
     segm3_opened = nd.binary_opening(segm3, np.ones((3,3)))
     segm3_closed = nd.binary_closing(segm3_opened, np.ones((3,3)))
     
+    segm4_opened = nd.binary_opening(segm4, np.ones((3,3)))
+    segm4_closed = nd.binary_closing(segm4_opened, np.ones((3,3)))
+    
     all_segments_cleaned = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) #nothing but 714, 901, 3
     
     all_segments_cleaned[segm1_closed] = (0,0,0)
     all_segments_cleaned[segm2_closed] = (255,0,0)
     all_segments_cleaned[segm3_closed] = (255,255,0)
+    all_segments_cleaned[segm4_closed] = (0,255,0)
     
     img_segmented = np.uint8(all_segments_cleaned)
-    
+
     # CALCULATING AREA
     # Getting image area
     
@@ -85,5 +92,5 @@ def cl_segment(img):
     rel_areas = [pore_area, qzove_area]
     
     
-    return np.uint8(all_segments_cleaned), rel_areas
+    return img_segmented, rel_areas
     

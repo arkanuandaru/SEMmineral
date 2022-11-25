@@ -71,10 +71,11 @@ def bse_segment(img):
     all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
     
     all_segments[segm1] = (0,0,0) # the pore 
-    all_segments[segm2] = (255,255,0) 
-    all_segments[segm3] = (0,255,0) 
-
+    all_segments[segm2] = (255,255,0) # Qz 
+    all_segments[segm3] = (0,255,0) # other
     
+    # 
+    cl_segm4 = segm3
     
     #%%    
     # normalize brightness
@@ -90,15 +91,7 @@ def bse_segment(img):
     # # segm4 = (denoise_img_as_8byte_gray > 210)
     
     #%% Constructing new image shape
-    
-    #nothing but denoise img size but blank
-
-    all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
-    all_segments[segm1] = (0,0,0) # the pore 2
-    all_segments[segm2] = (255,255,0) # quartz 0
-    all_segments[segm3] = (0,255,0) # other mineral 3
-    # all_segments[segm4] = (255,0,0) # qz overgrowth 1
-    
+ 
     
     # CLEANING UP
     
@@ -133,5 +126,5 @@ def bse_segment(img):
     rel_areas = [qz_area, pore_area, other_area]
     
     
-    return np.uint8(all_segments_cleaned), rel_areas
+    return np.uint8(all_segments_cleaned), cl_segm4, rel_areas
     

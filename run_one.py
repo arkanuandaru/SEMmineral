@@ -26,7 +26,7 @@ if __name__ == '__main__':
     img = cv2.imread(img_path + "/BSE/" + img_name + ".tif")
     
     # run  and save segmented image
-    img_bse_seg, _ = bse_segment(img)
+    img_bse_seg, cl_segm4, _ = bse_segment(img)
     save_bse_seg(img_bse_seg, img_path, img_name)
     
     #%% cl bse overlay
@@ -34,18 +34,18 @@ if __name__ == '__main__':
    # cv2.imwrite(img_path + "/CL_segmented/" + img_name + "_ovr.tif", img_overlay)
     
     # cl segmentation -- TODO: add other back
-    img_cl_seg, _ = cl_segment(img_overlay)
+    img_cl_seg, _ = cl_segment(img_overlay, cl_segm4)
     save_cl_seg(img_cl_seg, img_path, img_name)
         
     # show before and after
     fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 3.5))
 
     ax[0].imshow(img_overlay, cmap='gray', interpolation='nearest')
-    ax[0].set_title(img_name + '   Original')
+    ax[0].set_title(img_name + '   Overlay')
     ax[0].axis('off')
     
     ax[1].imshow(img_bse_seg, interpolation='nearest')
-    ax[1].set_title('bsesegmented')
+    ax[1].set_title('bse_segmented')
     ax[1].axis('off')
     
     ax[2].imshow(img_cl_seg, interpolation='nearest')
