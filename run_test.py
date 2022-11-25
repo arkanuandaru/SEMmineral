@@ -224,15 +224,11 @@ segm2_closed = nd.binary_closing(segm2_opened, np.ones((3,3)))
 segm3_opened = nd.binary_opening(segm3, np.ones((3,3)))
 segm3_closed = nd.binary_closing(segm3_opened, np.ones((3,3)))
 
-# segm4_opened = nd.binary_opening(segm4, np.ones((3,3)))
-# segm4_closed = nd.binary_closing(segm4_opened, np.ones((3,3)))
-
 all_segments_cleaned = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) #nothing but 714, 901, 3
 
 all_segments_cleaned[segm1_closed] = (0,0,0)
 all_segments_cleaned[segm2_closed] = (255,0,0)
 all_segments_cleaned[segm3_closed] = (255,255,0)
-# all_segments_cleaned[segm4_closed] = (1,1,0)
 
 img_segmented = np.uint8(all_segments_cleaned)
 

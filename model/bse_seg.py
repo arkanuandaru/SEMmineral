@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 21 15:08:29 2022
-@author: arkanuandaru
-"""
+
 
 import cv2
 import os

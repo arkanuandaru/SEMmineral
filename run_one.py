@@ -15,6 +15,7 @@ sys.path.append('/Users/sau/Documents/Stanford/adventure/semhackathon2022/semhac
 from bse_seg import *
 from cl_seg import *
 from bse_trans import *
+from save_seg import *
 
 #%% run one start
 if __name__ == '__main__':
@@ -26,27 +27,30 @@ if __name__ == '__main__':
     
     # run  and save segmented image
     img_bse_seg, _ = bse_segment(img)
-    cv2.imwrite(img_path + "/BSE_segmented/" + img_name + "_seg.tif", img_bse_seg)
+    save_bse_seg(img_bse_seg, img_path, img_name)
     
-    # cl bse overlay
+    #%% cl bse overlay
     img_overlay = bse_trans(img_name, img_path, 28, 20)
-    cv2.imwrite(img_path + "/CL_segmented/" + img_name + "_ovr.tif", img_overlay)
+   # cv2.imwrite(img_path + "/CL_segmented/" + img_name + "_ovr.tif", img_overlay)
     
     # cl segmentation -- TODO: add other back
     img_cl_seg, _ = cl_segment(img_overlay)
-    cv2.imwrite(img_path + "/CL_segmented/" + img_name + "_seg.tif", img_cl_seg)
+    save_cl_seg(img_cl_seg, img_path, img_name)
         
     # show before and after
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 3.5))
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 3.5))
 
     ax[0].imshow(img_overlay, cmap='gray', interpolation='nearest')
     ax[0].set_title(img_name + '   Original')
     ax[0].axis('off')
     
-    ax[1].imshow(img_cl_seg, interpolation='nearest')
-    ax[1].set_title('CL_segmented')
+    ax[1].imshow(img_bse_seg, interpolation='nearest')
+    ax[1].set_title('bsesegmented')
     ax[1].axis('off')
     
+    ax[2].imshow(img_cl_seg, interpolation='nearest')
+    ax[2].set_title('CL_segmented')
+    ax[2].axis('off')
     
     
 
