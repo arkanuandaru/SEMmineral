@@ -274,4 +274,7 @@ plt.show()
 img_name = "image5_58_3"
 img_path = "dataset1/CL_trained/"
 
-rel_areas = rel_calc(img_name, img_path, 28, 20)
+rel_areas, img_crop = rel_calc(img_name, img_path, 50, -50)
+
+plt.imshow(img_crop)
+sum(rel_areas)

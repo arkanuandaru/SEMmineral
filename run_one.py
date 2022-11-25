@@ -17,7 +17,7 @@ from cl_seg import *
 from bse_trans import *
 from save_seg import *
 
-#%% run one start
+# run one start
 if __name__ == '__main__':
    
     # bse segmentation

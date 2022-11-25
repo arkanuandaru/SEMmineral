@@ -20,7 +20,8 @@ from rel_calc import *
 if __name__ == '__main__':
 
     # access dataset
-    dataset_names = ["dataset1"]
+    
+    dataset_names = ["dataset1_run1", "dataset1_run2", "dataset1_run3","dataset2", "dataset3", "dataset4"]
     folder = os.getcwd()
     datasets = [f for f in dataset_names if os.path.isdir(os.path.join(folder, f))]
     
@@ -30,8 +31,9 @@ if __name__ == '__main__':
         bse_folder = os.path.join(folder, dataset, 'BSE')
         
         # print start confirmation for each dataset
-        print(f"{dataset} segmentation is starting...")
-        
+        print("******************************")
+        print(f"{dataset} segmentation is starting...\n")
+                
         if not os.path.isdir(bse_folder):
             print(bse_folder + ' not found..')
             continue
@@ -60,10 +62,9 @@ if __name__ == '__main__':
         
         cl_trn_folder = os.path.join(folder, dataset, 'CL_trained')   
         try:
-            if os.path.isdir(cl_trn_folder):
+            if not os.path.isdir(cl_trn_folder):
                 # print('\nDeleting everything in ' + str(cl_seg_folder) + '\n')
-                shutil.rmtree(cl_trn_folder)
-            os.mkdir(cl_trn_folder)
+                os.mkdir(cl_trn_folder)
         except Exception as e:
             print('Failed to create %s. Reason: %s' % (cl_trn_folder, e))
             continue
@@ -78,9 +79,11 @@ if __name__ == '__main__':
             continue
         
         # ask user for overlay shift
-        print("\nPlease enter overlay shifting values. Right and down is positive, left and up is negative.\n If value is unknown, please enter 0 for both.\n")
+        print("Please enter overlay shifting values. Right and down is positive, left and up is negative.\n If value is unknown, please enter 0 for both.\n")
         shift_x = int(input(f"Enter overlay x_shift for {dataset}: "))
         shift_y = int(input(f"Enter overlay y_shift {dataset}: "))
+        
+        print(f"\n{dataset} segmentation in progress...")
         
        # Loop through all BSE files and segment them
         for root, dirs, files in os.walk(bse_folder):
@@ -118,8 +121,11 @@ if __name__ == '__main__':
                     img_cl_seg, _ = cl_segment(img_overlay, cl_segm4_trans)
                     save_cl_seg(img_cl_seg, cl_seg_folder, filename)
                     
-                    # // TODO apply optimizer for cl segmentation
-                    
+                    # // TODO apply optimizer for cl segmentation using trained ML model
+                    save_cl_seg(img_cl_seg, cl_trn_folder, filename)
+                    #
+                    #
+                
                     # calculate areas from optimizer
                     rel_areas = rel_calc(filename, cl_trn_folder, shift_x, shift_y) 
                     
@@ -136,5 +142,6 @@ if __name__ == '__main__':
                         for l in lines:
                             csvfile.write(l)
                             
-        # print end confirmation for each dataset
-        print(f"{dataset} segmentation is done!")
+            # print end confirmation for each dataset
+            print(f"\n{dataset} segmentation is done!")
+            print("******************************")
