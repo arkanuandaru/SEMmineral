@@ -183,9 +183,11 @@ from skimage import data, io, img_as_ubyte
 from skimage.filters import threshold_multiotsu
 import numpy as np
 
-img_name = "image6_22_1"
-img_path = "dataset1/trainingset"
+img_name = "image5_58_3"
+img_path = "dataset1"
 img = cv2.imread(img_path + "/CL_segmented/" + img_name + "_ovr.tif")
+shift_x = 11
+shift_y = 103
 
 # denoise
 float_img = img_as_float(img)                                    
@@ -205,7 +207,9 @@ regions = np.digitize(denoise_img_as_8byte_gray, bins=thresholds)
 segm1 = (regions == 0) 
 segm2 = (regions == 1) 
 segm3 = (regions == 2) + (regions == 3) 
-segm4 = cl_segm4
+
+# assign other from BSE
+semg4 = np.roll(np.roll(cl_segm4, shift_x),shift_y,axis=0)
 
 # assign segments
 all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
@@ -238,8 +242,7 @@ all_segments_cleaned[segm4_closed] = (0,255,0)
 
 img_segmented = np.uint8(all_segments_cleaned)
 
-
-# cv2.imwrite(img_path + "seg.tif", img_segmented)
+save_cl_seg(img_segmented, img_path, img_name)
 
 #Let us look at the input image, thresholds on thehistogram and final segmented image
 fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 3.5))
@@ -264,3 +267,6 @@ ax[2].axis('off')
 plt.subplots_adjust()
 
 plt.show()
+
+#%% check for run number
+

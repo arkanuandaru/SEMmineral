@@ -114,6 +114,7 @@ def bse_segment(img):
     all_segments_cleaned[segm3_closed] = (0,255,0)
     # all_segments_cleaned[segm4_closed] = (1,1,0)
     
+    img_segmented = np.uint8(all_segments_cleaned)
     
     # CALCULATING AREA
     # Getting image area
@@ -126,5 +127,5 @@ def bse_segment(img):
     rel_areas = [qz_area, pore_area, other_area]
     
     
-    return np.uint8(all_segments_cleaned), cl_segm4, rel_areas
+    return img_segmented, cl_segm4, rel_areas
     

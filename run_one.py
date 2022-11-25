@@ -21,8 +21,8 @@ from save_seg import *
 if __name__ == '__main__':
    
     # bse segmentation
-    img_name = "image6_22_1"
-    img_path = "dataset1/trainingset"
+    img_name = "image5_58_3"
+    img_path = "dataset1"
     img = cv2.imread(img_path + "/BSE/" + img_name + ".tif")
     
     # run  and save segmented image
@@ -30,11 +30,13 @@ if __name__ == '__main__':
     save_bse_seg(img_bse_seg, img_path, img_name)
     
     #%% cl bse overlay
-    img_overlay = bse_trans(img_name, img_path, 28, 20)
-   # cv2.imwrite(img_path + "/CL_segmented/" + img_name + "_ovr.tif", img_overlay)
+    shift_x = 11
+    shift_y = 103
+    img_overlay, cl_segm4_trans = bse_trans(img_name, img_path, cl_segm4, shift_x, shift_y)
+    cv2.imwrite(img_path + "/CL_segmented/" + img_name + "_ovr.tif", img_overlay)
     
-    # cl segmentation -- TODO: add other back
-    img_cl_seg, _ = cl_segment(img_overlay, cl_segm4)
+    # cl segmentation 
+    img_cl_seg, _ = cl_segment(img_overlay, cl_segm4_trans)
     save_cl_seg(img_cl_seg, img_path, img_name)
         
     # show before and after

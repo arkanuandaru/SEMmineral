@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 from scipy import ndimage as nd
 
 
-def cl_segment(img, cl_segm4):
+def cl_segment(img, cl_segm4_trans):
     """
     
     Parameters
@@ -49,7 +49,7 @@ def cl_segment(img, cl_segm4):
     segm1 = (regions == 0) 
     segm2 = (regions == 1) 
     segm3 = (regions == 2) + (regions == 3) 
-    segm4 = cl_segm4
+    segm4 = cl_segm4_trans
     
     # assign segments
     all_segments = np.zeros((denoise_img_as_8byte.shape[0], denoise_img_as_8byte.shape[1], 3)) 
