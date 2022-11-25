@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 # custom modules
 sys.path.append('/Users/sau/Documents/Stanford/adventure/semhackathon2022/semhackathon/model/')
 from bse_seg import *
+from rel_calc import *
 
 #%% test threshold - setup
 
@@ -268,5 +269,9 @@ plt.subplots_adjust()
 
 plt.show()
 
-#%% check for run number
+#%% test rel_calc
 
+img_name = "image5_58_3"
+img_path = "dataset1/CL_trained/"
+
+rel_areas = rel_calc(img_name, img_path, 28, 20)

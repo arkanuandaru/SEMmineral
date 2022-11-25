@@ -15,6 +15,7 @@ from bse_seg import *
 from cl_seg import *
 from bse_trans import *
 from save_seg import *
+from rel_calc import *
 
 if __name__ == '__main__':
 
@@ -57,6 +58,16 @@ if __name__ == '__main__':
             print('Failed to create %s. Reason: %s' % (cl_seg_folder, e))
             continue
         
+        cl_trn_folder = os.path.join(folder, dataset, 'CL_trained')   
+        try:
+            if os.path.isdir(cl_trn_folder):
+                # print('\nDeleting everything in ' + str(cl_seg_folder) + '\n')
+                shutil.rmtree(cl_trn_folder)
+            os.mkdir(cl_trn_folder)
+        except Exception as e:
+            print('Failed to create %s. Reason: %s' % (cl_trn_folder, e))
+            continue
+        
         # Write the header to the results file
         resfile = os.path.join(folder, dataset, 'results_' + dataset + '.csv')
         try:
@@ -67,10 +78,9 @@ if __name__ == '__main__':
             continue
         
         # ask user for overlay shift
-        # !TODO: ask user for input, default to (0,0)
-     
-        shift_x = int(input(f"enter overlay x_shift for {dataset} (right is positive):"))
-        shift_y = int(input(f"enter overlay y_shift {dataset} (down is positive):"))
+        print("\nPlease enter overlay shifting values. Right and down is positive, left and up is negative.\n If value is unknown, please enter 0 for both.\n")
+        shift_x = int(input(f"Enter overlay x_shift for {dataset}: "))
+        shift_y = int(input(f"Enter overlay y_shift {dataset}: "))
         
        # Loop through all BSE files and segment them
         for root, dirs, files in os.walk(bse_folder):
@@ -105,8 +115,13 @@ if __name__ == '__main__':
                     #     img_overlay, cl_segm4_trans = bse_trans(filename, dataset, cl_segm4, 0, 0)
                         
                     # cl segmentation 
-                    img_cl_seg, rel_areas = cl_segment(img_overlay, cl_segm4_trans)
+                    img_cl_seg, _ = cl_segment(img_overlay, cl_segm4_trans)
                     save_cl_seg(img_cl_seg, cl_seg_folder, filename)
+                    
+                    # // TODO apply optimizer for cl segmentation
+                    
+                    # calculate areas from optimizer
+                    rel_areas = rel_calc(filename, cl_trn_folder, shift_x, shift_y) 
                     
                     # Keep the earlier saved results
                     lines = []
