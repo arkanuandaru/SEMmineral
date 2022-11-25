@@ -76,7 +76,7 @@ if __name__ == '__main__':
                 
                     # go to the CL pair
                     
-                    # assign overlay shifting
+                    # assign overlay shifting --!TODO: ask user for input, default to (0,0)
                     if file[-5] == 1: 
                         img_overlay, cl_segm4_trans = bse_trans(filename, dataset, cl_segm4, 28, 20)
                     elif file[-5] == 2: 
